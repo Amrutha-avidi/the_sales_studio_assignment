@@ -12,9 +12,13 @@ app.use(express.json());
 app.use(cookieParser());
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log("MongoDB Connected"))
-    .catch((err) => console.error("MongoDB Connection Failed:", err));
+mongoose.connect(process.env.MONGO_URI, {
+
+    serverSelectionTimeoutMS: 30000, // Increase timeout to 30 seconds
+    socketTimeoutMS: 45000, // Optional: Handles idle connections
+})
+.then(() => console.log("MongoDB connected successfully"))
+.catch((err) => console.error("MongoDB connection error:", err));
 
 // Abuse Prevention Data (For IP and Cookies)
 const claimedRecords = new Map();  // { IP: timestamp }
