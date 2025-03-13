@@ -41,7 +41,7 @@ app.get("/api/claim", async (req, res) => {
     const lastIPClaimTime = claimedRecords.get(userIP);
     if (lastIPClaimTime && Date.now() - lastIPClaimTime < cooldownPeriod) {
         const timeLeft = Math.ceil((cooldownPeriod - (Date.now() - lastIPClaimTime)) / 1000/60);
-        return res.status(403).json({ message: `Please wait ${timeLeft} minutes before claiming another coupon.` });
+        return res.status(403).json({ message: `Please wait ${timeLeft} minutes before claiming another coupon !` });
     }
     if (!userCookie) {
         const uniqueID = Date.now().toString();
