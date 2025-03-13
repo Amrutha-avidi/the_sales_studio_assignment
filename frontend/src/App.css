@@ -37,6 +37,7 @@ h1 {
   cursor: pointer;
   border-radius: 5px;
   transition: background 0.3s ease;
+  font-size: 20px;
 }
 
 .claim-btn:hover {
