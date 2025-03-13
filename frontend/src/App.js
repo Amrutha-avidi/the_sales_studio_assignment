@@ -10,7 +10,7 @@ function App() {
     useEffect(() => {
         const fetchCoupons = async () => {
             try {
-                const response = await axios.get("http://localhost:3001/api/available-coupons", { withCredentials: true });
+                const response = await axios.get("https://the-sales-studio-assignment.onrender.com/api/available-coupons", { withCredentials: true });
                 setCoupons(response.data.coupons);
             } catch (error) {
                 console.error("Error fetching coupons:", error);
@@ -25,7 +25,7 @@ function App() {
 
     const claimCoupon = async () => {
         try {
-            const response = await axios.get("http://localhost:3001/api/claim", { withCredentials: true });
+            const response = await axios.get("https://the-sales-studio-assignment.onrender.com/api/claim", { withCredentials: true });
             setMessage(`🎉 ${response.data.message}`);
         } catch (error) {
             setMessage(`❌ ${error.response?.data?.message || "Error claiming coupon."}`);
