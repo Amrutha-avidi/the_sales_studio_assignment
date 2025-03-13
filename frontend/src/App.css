@@ -1,0 +1,109 @@
+body {
+  background-color: #f0f8ff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 600px;
+  background-color: #fff;
+  border: 2px solid #4CAF50;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+h1 {
+  color: #4CAF50;
+  margin-bottom: 5px;
+}
+
+.tagline {
+  color: #555;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.claim-btn {
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+}
+
+.claim-btn:hover {
+  background-color: #45a049;
+}
+
+.message {
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+h2 {
+  color: #333;
+  margin-top: 20px;
+}
+
+.loader {
+  color: #4CAF50;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.no-coupons {
+  color: #ff4444;
+  font-weight: bold;
+}
+
+.coupon-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.coupon-card {
+  padding: 15px;
+  border: 2px solid #4CAF50;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.coupon-card.available {
+  background-color: #ffffff;
+  color: #4CAF50;
+}
+
+.coupon-card.claimed {
+  background-color: #d3d3d3; 
+  color: #7a7a7a;
+  border-color: #b0b0b0;
+  position: relative;
+}
+
+.claimed-tag {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #ff4444;
+  color: #fff;
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+
+.coupon-card:hover {
+  transform: scale(1.05);
+  background-color: #e8f5e9;
+}
