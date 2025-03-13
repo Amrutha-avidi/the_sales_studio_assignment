@@ -34,14 +34,14 @@ function App() {
 
     return (
         <div className="app-container">
-            <header>
+            <div>
                 <h1>🎯 Round-Robin Coupon Distribution</h1>
                 <p className="tagline">Unlock exclusive deals — claim yours before they're gone!</p>
                 <button onClick={claimCoupon} className="claim-btn">🎁 Claim Coupon</button>
                 {message && <p className="message">{message}</p>}
-            </header>
+            </div>
 
-            <main>
+            <div>
                 <h2>📝 Available Coupons: {coupons.length}</h2>
                 {loading ? (
                     <div className="loader">Loading Coupons...</div>
@@ -55,12 +55,11 @@ function App() {
                                 className= "coupon-card available"
                             >
                                 {coupon.code}
-                                {coupon.claimedBy && <span className="claimed-tag">Claimed</span>}
                             </div>
                         ))}
                     </div>
                 )}
-            </main>
+            </div>
         </div>
     );
 }
