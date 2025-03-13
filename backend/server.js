@@ -17,22 +17,47 @@ mongoose.connect(process.env.MONGO_URI, {
     serverSelectionTimeoutMS: 30000, // Increase timeout to 30 seconds
     socketTimeoutMS: 45000, // Optional: Handles idle connections
 })
-.then(() => console.log("MongoDB connected successfully"))
-.catch((err) => console.error("MongoDB connection error:", err));
+    .then(() => console.log("MongoDB connected successfully"))
+    .catch((err) => console.error("MongoDB connection error:", err));
 
 // Abuse Prevention Data (For IP and Cookies)
 const claimedRecords = new Map();  // { IP: timestamp }
-console.log(claimedRecords)
+
+const extractRealIP = (req) => {
+    const forwardedFor = req.headers['x-forwarded-for'];
+    if (forwardedFor) {
+        return forwardedFor.split(',')[0].trim(); // Extracts first public IP
+    }
+    return req.headers['x-real-ip'] || req.socket.remoteAddress;
+};
 
 app.get("/api/claim", async (req, res) => {
 
-    const userIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    const lastClaimTime = claimedRecords.get(userIP);
+    const userIP = extractRealIP(req);
+    const userCookie = req.cookies['claimedID'];
 
     const cooldownPeriod = 60 * 1000; // **60 seconds cooldown for testing**
-    if (lastClaimTime && Date.now() - lastClaimTime < cooldownPeriod) {
-        const timeLeft = Math.ceil((cooldownPeriod - (Date.now() - lastClaimTime)) / 1000);
-        return res.status(403).json({ message: `Please wait ${timeLeft} seconds before claiming again.` });
+
+    const lastIPClaimTime = claimedRecords.get(userIP);
+    if (lastIPClaimTime && Date.now() - lastIPClaimTime < cooldownPeriod) {
+        const timeLeft = Math.ceil((cooldownPeriod - (Date.now() - lastIPClaimTime)) / 1000);
+        return res.status(403).json({ message: `IP restricted. Please wait ${timeLeft} seconds before claiming again.` });
+    }
+    if (!userCookie) {
+        const uniqueID = Date.now().toString();
+        res.cookie('claimedID', uniqueID, {
+            maxAge: cooldownPeriod,
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "Lax"
+        });
+        claimedRecords.set(uniqueID, Date.now());
+    } else {
+        const lastCookieClaimTime = claimedRecords.get(userCookie);
+        if (lastCookieClaimTime && Date.now() - lastCookieClaimTime < cooldownPeriod) {
+            const timeLeft = Math.ceil((cooldownPeriod - (Date.now() - lastCookieClaimTime)) / 1000);
+            return res.status(403).json({ message: `Cookie restricted. Please wait ${timeLeft} seconds before claiming again.` });
+        }
     }
 
     // Round-Robin Logic
@@ -45,9 +70,10 @@ app.get("/api/claim", async (req, res) => {
     availableCoupon.claimedBy = userIP;
     await availableCoupon.save();
 
-    claimedRecords.set(userIP, Date.now());
+    claimedRecords.set(userIP, Date.now()); // Track IP cooldown period
+    claimedRecords.set(userCookie || userIP, Date.now()); // Track Cookie cooldown
 
-    res.cookie("claimed", "true", { 
+    res.cookie("claimed", "true", {
         maxAge: cooldownPeriod,
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
